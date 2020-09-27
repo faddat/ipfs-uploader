@@ -11,7 +11,6 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
-	"mime/multipart"
 	"net/http"
 )
 
@@ -52,26 +51,7 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
-	body := new(bytes.Buffer)
-	writer := multipart.NewWriter(body)
-	part, err := writer.CreateFormFile("cheating", "cheating")
-	if err != nil {
-		fmt.Println(err)
-	}
-
-
-	err = writer.Close()
-	if err != nil {
-		fmt.Println(err)
-	}
-
 	z := bytes.NewBuffer(fileBytes)
-
-
-	part.Write(fileBytes)
-
-	// write this byte array to our temporary file
-	tempFile.Write(fileBytes)
 
 	//craft and send the http request
 	request, err := http.NewRequest("POST", "http://localhost:8080/ipfs/", z)
@@ -90,6 +70,6 @@ func setupRoutes() {
 }
 
 func main() {
-	fmt.Println("Hello World")
+	fmt.Println("Starting Blurt's file upload service")
 	setupRoutes()
 }
