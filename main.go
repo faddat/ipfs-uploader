@@ -2,7 +2,7 @@
 //https://tutorialedge.net/golang/go-file-upload-tutorial/
 //https://gist.github.com/mattetti/5914158/f4d1393d83ebedc682a3c8e7bdc6b49670083b84
 //https://github.com/ipfs/js-ipfs/tree/master/examples/ipfs-101
-// But I eventuually gave up on actuuallly using the client librarries from IPFS and decidded to just POST it to a locally exposed IPFS gateway, that makes the brain hurt less and doesn't have any securrityy tradeoffs.
+// But I eventually gave up on actually using the client libraries from IPFS and decided to just POST it to a locally exposed IPFS gateway, that makes the brain hurt less and doesn't have any securrityy tradeoffs.
 
 
 package main
@@ -10,7 +10,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	shell "github.com/ipfs/go-ipfs-http-api"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
@@ -60,14 +59,13 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
-	for key, val := range params {
-		_ = writer.WriteField(key, val)
-	}
+
 	err = writer.Close()
 	if err != nil {
 		fmt.Println(err)
 	}
 
+	z := bytes.NewBuffer(fileBytes)
 
 
 	part.Write(fileBytes)
@@ -75,6 +73,12 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 	// write this byte array to our temporary file
 	tempFile.Write(fileBytes)
 
+	//craft and send the http request
+	request, err := http.NewRequest("POST", "http://localhost:8080/ipfs/", z)
+	client := &http.Client{}
+	resp, err := client.Do(request)
+
+	fmt.Println(resp)
 
 	// return that we have successfully uploaded our file!
 	fmt.Fprintf(w, "Successfully Uploaded File\n")
