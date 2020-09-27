@@ -3,6 +3,8 @@
 //https://gist.github.com/mattetti/5914158/f4d1393d83ebedc682a3c8e7bdc6b49670083b84
 //https://github.com/ipfs/js-ipfs/tree/master/examples/ipfs-101
 // But I eventually gave up on actually using the client libraries from IPFS and decided to just POST it to a locally exposed IPFS gateway, that makes the brain hurt less and doesn't have any securrityy tradeoffs.
+// So what this does is it provides an endpoint where users can upload files, and it does not write those files to disk.  Instead, pumps them into ipfs, which does write them to disk.
+
 package main
 
 import (
@@ -47,11 +49,12 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 	client := &http.Client{}
 	resp, err := client.Do(request)
 
-	//Later we will parse the response and make it more cleanly deliver the
-	fmt.Println(resp)
+	//Later we will parse the response and make it more cleanly deliver the CID
+	fmt.Println(resp.Body)
+	fmt.Println(resp.Header)
 
 	// return that we have successfully uploaded our file!
-	fmt.Fprintf(w, "Successfully Uploaded File\n")
+	fmt.Fprintf(w, "Successfully Uploaded File\n", resp)
 }
 
 func setupRoutes() {
