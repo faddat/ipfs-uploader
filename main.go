@@ -1,7 +1,8 @@
 //This came from:
 //https://tutorialedge.net/golang/go-file-upload-tutorial/
 //https://gist.github.com/mattetti/5914158/f4d1393d83ebedc682a3c8e7bdc6b49670083b84
-//
+//https://github.com/ipfs/js-ipfs/tree/master/examples/ipfs-101
+// But I eventuually gave up on actuuallly using the client librarries from IPFS and decidded to just POST it to a locally exposed IPFS gateway, that makes the brain hurt less and doesn't have any securrityy tradeoffs.
 
 
 package main
@@ -30,6 +31,8 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
+
+
 	defer file.Close()
 	fmt.Printf("Uploaded File: %+v\n", handler.Filename)
 	fmt.Printf("File Size: %+v\n", handler.Size)
@@ -50,19 +53,28 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
-
 	body := new(bytes.Buffer)
 	writer := multipart.NewWriter(body)
-	part, err := writer.CreateFormFile(paramName, fi.Name())
+	part, err := writer.CreateFormFile("cheating", "cheating")
 	if err != nil {
-		return nil, err
+		fmt.Println(err)
 	}
-	part.Write(fileContents)
+
+	for key, val := range params {
+		_ = writer.WriteField(key, val)
+	}
+	err = writer.Close()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+
+
+	part.Write(fileBytes)
 
 	// write this byte array to our temporary file
 	tempFile.Write(fileBytes)
-	pin := sh.Pin()
-	fmt.Println(cid)
+
 
 	// return that we have successfully uploaded our file!
 	fmt.Fprintf(w, "Successfully Uploaded File\n")
