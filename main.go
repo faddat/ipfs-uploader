@@ -10,6 +10,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	shell "github.com/ipfs/go-ipfs-api"
 	"io/ioutil"
 	"net/http"
 )
@@ -44,17 +45,22 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 	//The magic trick that makes it work.  Take from []byte too a byte buffer.
 	z := bytes.NewBuffer(fileBytes)
 
+	sh := shell.NewShell("localhost:5001")
+	cid, err := sh.Add(z)
+
 	//craft and send the http request
-	request, err := http.NewRequest("POST", "http://localhost:8080/ipfs/", z)
-	client := &http.Client{}
-	resp, err := client.Do(request)
+	// request, err := http.NewRequest("POST", "http://localhost:8080/ipfs/", z)
+	// client := &http.Client{}
+	//resp, err := client.Do(request)
 
 	//Later we will parse the response and make it more cleanly deliver the CID
-	fmt.Println(resp.Body)
-	fmt.Println(resp.Header)
+	//fmt.Println(resp.Body)
+	//fmt.Println(resp.Header)
+
+	fmt.Println("added", cid)
 
 	// return that we have successfully uploaded our file!
-	fmt.Fprintf(w, "Successfully Uploaded File\n", resp)
+	fmt.Fprintf(w, "Successfully Uploaded File\n", cid)
 }
 
 func setupRoutes() {
