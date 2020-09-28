@@ -2,7 +2,7 @@
 //https://tutorialedge.net/golang/go-file-upload-tutorial/
 //https://gist.github.com/mattetti/5914158/f4d1393d83ebedc682a3c8e7bdc6b49670083b84
 //https://github.com/ipfs/js-ipfs/tree/master/examples/ipfs-101
-\// So what this does is it provides an endpoint where users can upload files, and it does not write those files to disk.  Instead, pumps them into ipfs, which does write them to disk.
+// So what this does is it provides an endpoint where users can upload files, and it does not write those files to disk.  Instead, pumps them into ipfs, which does write them to disk.
 
 package main
 
@@ -49,16 +49,8 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 	
 	// Send the byte buffer to the ipfs API
 	cid, err := sh.Add(z)
-
-	//craft and send the http request
-	// request, err := http.NewRequest("POST", "http://localhost:8080/ipfs/", z)
-	// client := &http.Client{}
-	//resp, err := client.Do(request)
-
-	//Later we will parse the response and make it more cleanly deliver the CID
-	//fmt.Println(resp.Body)
-	//fmt.Println(resp.Header)
-
+	
+	// Output to terminal on server
 	fmt.Println("added", cid)
 
 	// return that we have successfully uploaded our file!
