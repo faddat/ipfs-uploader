@@ -60,7 +60,7 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("added", cid)
 
 	// return that we have successfully uploaded our file!
-	fmt.Fprintf(w, "Successfully Uploaded File\n", cid)
+	fmt.Fprintf(w, cid)
 }
 
 func setupRoutes() {
